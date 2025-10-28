@@ -23,10 +23,9 @@ namespace ASSY_CALLAMR
 
         public PlcHelper PLC
         { get { return _plcH; } }
-        #region Event
-        public delegate void RequestApiEventDelegate(APIMessage mess);
-        public event RequestApiEventDelegate RequestApiEvent;
-        #endregion
+        public PlcConfig Config
+        { get { return _config; } }
+        public event EventHandler<APIMessage> RequestApiEvent;
         public Equipment(PlcConfig config)
         {
             _config = config;
@@ -124,7 +123,7 @@ namespace ASSY_CALLAMR
                 Thread.Sleep(10);
             }
         }
-        public void ResponseAPI()
+        public void ResponseAPI(TaskResponse response)
         {
             _plcH.SetInt(_config.WOResult, 1);
             _plcH.SetBit(_config.BOResult, true);
@@ -133,11 +132,7 @@ namespace ASSY_CALLAMR
         #region EventHandle
         private void RequestApiEventHandle(APIMessage mess)
         {
-            var handle = RequestApiEvent;
-            if (handle != null)
-            {
-                handle(mess);
-            }
+            RequestApiEvent?.Invoke(this, mess);
         }
         #endregion
     }

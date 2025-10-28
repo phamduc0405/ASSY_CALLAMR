@@ -43,11 +43,12 @@ namespace ASSY_CALLAMR
             _workerTask = Task.Run(ProcessQueueAsync);
         }
 
-        public void EnqueueRequest(APIMessage mess)
-        {
-            _queue.Enqueue(mess);
-        }
 
+        public void EnqueueRequest(APIMessage apiMsg)
+        {
+            if (apiMsg == null) throw new ArgumentNullException(nameof(apiMsg));
+            _queue.Enqueue(apiMsg);
+        }
         private async Task ProcessQueueAsync()
         {
             while (!_cts.IsCancellationRequested)

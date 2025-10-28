@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace ASSY_CALLAMR
@@ -18,7 +19,8 @@ namespace ASSY_CALLAMR
         private static string ConfigFile = "Config.xml";
         private static readonly string BaseDir = AppDomain.CurrentDomain.BaseDirectory;
         public List<Equipment> Equipments = new List<Equipment>();
-        public Controller() 
+        private EquipmentApiService _apiService;
+        public Controller()
         {
             Initial();
             SaveConfig(Config);
@@ -30,16 +32,42 @@ namespace ASSY_CALLAMR
             Config = LoadConfig();
             Config = Config ?? new EqConfig();
             Config.PLCs = Config.PLCs ?? new List<PlcConfig>();
+            _apiService = new EquipmentApiService(Config.API.BaseUrl);
         }
         public void Start()
         {
             foreach (var plcConfig in Config.PLCs)
             {
                 var equipment = new Equipment(plcConfig);
+                equipment.RequestApiEvent += Equipment_RequestApiEvent;
                 equipment.Start();
                 Equipments.Add(equipment);
             }
         }
+
+        private void Equipment_RequestApiEvent(object sender, APIMessage mess)
+        {
+            var eq = (Equipment)sender;
+            LogApp.Info($"[{eq.Config.ID}] bắn event: {mess}");
+            string keyNo = mess.KeyNo; // ← Copy ra biến
+            string message = mess.Message;
+            var apiMsg = new APIMessage(
+         keyNo: keyNo,
+         message: message,
+         callback: result =>
+         {
+             LogApp.Info($"API → {keyNo}: [{result.ResultCode}] {result.ResultMessage}");
+             if (result.ResultCode == 200)
+             {
+                 eq.ResponseAPI(result);
+             }
+         });
+
+            _apiService.EnqueueRequest(apiMsg);
+        }
+
+
+
         public void Stop()
         {
             foreach (var equipment in Equipments)
@@ -56,10 +84,7 @@ namespace ASSY_CALLAMR
 
         #region Private Method
 
-        private void RequestAPI()
-        {
-
-        }
+        
         private EqConfig LoadConfig()
         {
             try
@@ -101,7 +126,7 @@ namespace ASSY_CALLAMR
                 LogApp.Error("Save config error: " + ex.Message);
             }
         }
-        
+
         #endregion
 
 
