@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="ASSY_CALLARM.EquipmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ASSY_CALLARM"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Background="#A7D8F5" Padding="10" CornerRadius="5,5,0,0" >
+            <TextBlock Name="txtHeader" Style="{StaticResource CaptionTextBlockStyle}" 
+                       Text="Equipment View" FontSize="20" FontWeight="Bold" Foreground="Black"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <Grid Grid.Row="1" Background="White" >
+            <DockPanel Margin="10" LastChildFill="True">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <TextBlock Name="txtConnected" Text="PLC Connected" Style="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Width="120" Height="30" Margin="0,0,10,0"/>
+                    <Button Name="btnConnected" Style="{StaticResource ButtonCircleWithContent}" 
+                              FontSize="50" Tag="Plus"  Width="500"
+                            Foreground="Red" Content="xxx" 
+HorizontalContentAlignment="Left"       Padding="0,0,75,0"                   Height="200"/>
+                </StackPanel>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</UserControl>

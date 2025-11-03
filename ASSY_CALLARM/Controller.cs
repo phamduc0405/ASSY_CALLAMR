@@ -66,7 +66,23 @@ namespace ASSY_CALLAMR
             _apiService.EnqueueRequest(apiMsg);
         }
 
+        public void SendApiMessage(APIMessage mess,string id)
+        {
+            
+            LogApp.Info($"[{id}] bắn event: {mess}");
+            string keyNo = mess.KeyNo;
+            string message = mess.Message;
+            var apiMsg = new APIMessage(
+         keyNo: keyNo,
+         message: message,
+         callback: result =>
+         {
+             LogApp.Info($"API → {keyNo}: [{result.ResultCode}] {result.ResultMessage}");
+             
+         });
 
+            _apiService.EnqueueRequest(apiMsg);
+        }
 
         public void Stop()
         {

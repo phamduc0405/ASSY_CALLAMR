@@ -24,6 +24,21 @@ namespace ASSY_CALLAMR
         public MainWindow()
         {
             InitializeComponent();
+            viewEqp.btnConnected.Click += BtnConnected_Click;
+        }
+
+        private void BtnConnected_Click(object sender, RoutedEventArgs e)
+        {
+            APIMessage mess = new APIMessage
+            (
+                keyNo:"2",
+                message: string.Empty,
+                callback: result =>
+                {
+                    MessageBox.Show($"API Response: [{result.ResultCode}] {result.ResultMessage}");
+                }
+            );
+            AppController.SendApiMessage(mess, "1");
         }
     }
 }
